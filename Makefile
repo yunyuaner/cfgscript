@@ -15,9 +15,10 @@ FILE ?= cfgscript_cli.c
 SRC_DIR := .
 SRCS := $(wildcard $(SRC_DIR)/*.c)
 
-# Detect OS for proper clean command
+# Detect OS for proper clean command. Use POSIX `rm` in MSYS/MinGW.
 ifeq ($(OS),Windows_NT)
-RM := del /Q
+# Prefer `rm -f` under MSYS/MinGW shells where `del` (cmd internal) isn't available.
+RM := rm -f
 else
 RM := rm -f
 endif
@@ -38,9 +39,6 @@ build: $(TARGETS)
 cfgscript_cli.exe: cfgscript_cli.c cfgscript.c cfgscript.h
 	$(CC) $(CFLAGS) cfgscript_cli.c cfgscript.c -o $@ $(LDFLAGS)
 
-cfgscript.exe: cfgscript_cli.c cfgscript.c cfgscript.h
-	$(CC) $(CFLAGS) cfgscript_cli.c cfgscript.c -o $@ $(LDFLAGS)
-
 # Unit test target
 unit_test: unit_tests/test_cfgscript.exe
 
@@ -58,13 +56,8 @@ run: build
 	fi
 
 clean:
-ifeq ($(OS),Windows_NT)
-	-del /Q *.o *.exe 2>nul
-	-del /Q unit_tests\*.exe 2>nul
-else
 	-$(RM) *.o *.exe
 	-$(RM) unit_tests/*.exe
-endif
 
 list:
 	@echo "Source files in $(SRC_DIR):"

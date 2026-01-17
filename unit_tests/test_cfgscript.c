@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
+#include <dirent.h>
+#include <sys/types.h>
 
 #include "../cfgscript.h"
 
@@ -243,30 +245,71 @@ int main(int argc, char **argv) {
     char path[1024];
     int pass = 1;
 
-    snprintf(path, sizeof(path), "%s/basic_macros.cfg", dir);
-    pass &= run1("basic_macros", test_basic_macros(path));
+    DIR* dp = opendir(dir);
+    if (!dp) {
+        fprintf(stderr, "Failed to open dir: %s\n", dir);
+        return 2;
+    }
 
-    snprintf(path, sizeof(path), "%s/if_elif_else.cfg", dir);
-    pass &= run1("if_elif_else", test_if_elif_else(path));
+    int ran_errors = 0;
+    int ran_dump = 0;
 
-    snprintf(path, sizeof(path), "%s/set_expr_and_bool.cfg", dir);
-    pass &= run1("set_expr_and_bool", test_set_expr_and_bool(path));
+    struct dirent* ent;
+    while ((ent = readdir(dp)) != NULL) {
+        const char* name = ent->d_name;
+        size_t nl = strlen(name);
+        if (nl < 5) continue; /* skip short names */
+        if (strcmp(name + nl - 4, ".cfg") != 0) continue;
 
-    snprintf(path, sizeof(path), "%s/for_range.cfg", dir);
-    pass &= run1("for_range", test_for_range(path));
+        snprintf(path, sizeof(path), "%s/%s", dir, name);
 
-    snprintf(path, sizeof(path), "%s/for_list.cfg", dir);
-    pass &= run1("for_list", test_for_list(path));
+        if (strcmp(name, "basic_macros.cfg") == 0) {
+            pass &= run1("basic_macros", test_basic_macros(path));
+            continue;
+        }
+        if (strcmp(name, "if_elif_else.cfg") == 0) {
+            pass &= run1("if_elif_else", test_if_elif_else(path));
+            continue;
+        }
+        if (strcmp(name, "set_expr_and_bool.cfg") == 0) {
+            pass &= run1("set_expr_and_bool", test_set_expr_and_bool(path));
+            continue;
+        }
+        if (strcmp(name, "for_range.cfg") == 0) {
+            pass &= run1("for_range", test_for_range(path));
+            continue;
+        }
+        if (strcmp(name, "for_list.cfg") == 0) {
+            pass &= run1("for_list", test_for_list(path));
+            continue;
+        }
+        if (strcmp(name, "nested_for.cfg") == 0) {
+            pass &= run1("nested_for", test_nested_for(path));
+            continue;
+        }
+        if (strcmp(name, "include_main.cfg") == 0) {
+            pass &= run1("include", test_include(path));
+            continue;
+        }
+        if (strcmp(name, "dump_target.cfg") == 0) {
+            if (!ran_dump) {
+                pass &= run1("dump_preprocessed", test_dump_preprocessed(dir));
+                ran_dump = 1;
+            }
+            continue;
+        }
+        /* error test files: run once if any error file exists */
+        if (strncmp(name, "err_", 4) == 0) {
+            if (!ran_errors) {
+                pass &= run1("errors", test_errors(dir));
+                ran_errors = 1;
+            }
+            continue;
+        }
+        /* unknown or additional test files can be added here */
+    }
 
-    snprintf(path, sizeof(path), "%s/nested_for.cfg", dir);
-    pass &= run1("nested_for", test_nested_for(path));
-
-    snprintf(path, sizeof(path), "%s/include_main.cfg", dir);
-    pass &= run1("include", test_include(path));
-
-    pass &= run1("dump_preprocessed", test_dump_preprocessed(dir));
-
-    pass &= run1("errors", test_errors(dir));
+    closedir(dp);
 
     return pass ? 0 : 1;
 }
