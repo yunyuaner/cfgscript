@@ -28,7 +28,9 @@ int main(int argc, char** argv) {
     optind = 1;
     while (1) {
         int opt = getopt_long(argc, argv, "hv", global_opts, NULL);
-        if (opt == -1) break;
+        if (opt == -1) {
+            break;
+        }
         switch (opt) {
             case 'h':
                 print_usage(argv[0]);
@@ -63,7 +65,9 @@ int main(int argc, char** argv) {
         optind = 1;
         while (1) {
             int opt = getopt_long(sub_argc, sub_argv, "f:h", load_opts, NULL);
-            if (opt == -1) break;
+            if (opt == -1) {
+                break;
+            }
             switch (opt) {
                 case 'f': file = optarg; break;
                 case 'h': print_usage(argv[0]); return 0;
@@ -73,7 +77,9 @@ int main(int argc, char** argv) {
 
         /* remaining positional arg may be file */
         if (!file) {
-            if (optind < sub_argc) file = sub_argv[optind];
+            if (optind < sub_argc) {
+                file = sub_argv[optind];
+            }
         }
 
         if (!file) {
@@ -109,7 +115,9 @@ int main(int argc, char** argv) {
         optind = 1;
         while (1) {
             int opt = getopt_long(sub_argc, sub_argv, "i:o:h", dump_opts, NULL);
-            if (opt == -1) break;
+            if (opt == -1) {
+                break;
+            }
             switch (opt) {
                 case 'i': infile = optarg; break;
                 case 'o': outfile = optarg; break;
@@ -120,10 +128,14 @@ int main(int argc, char** argv) {
 
         /* positional fallback */
         if (!infile) {
-            if (optind < sub_argc) infile = sub_argv[optind++];
+            if (optind < sub_argc) {
+                infile = sub_argv[optind++];
+            }
         }
         if (!outfile) {
-            if (optind < sub_argc) outfile = sub_argv[optind];
+            if (optind < sub_argc) {
+                outfile = sub_argv[optind];
+            }
         }
 
         if (!infile || !outfile) {

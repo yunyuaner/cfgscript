@@ -258,8 +258,12 @@ int main(int argc, char **argv) {
     while ((ent = readdir(dp)) != NULL) {
         const char* name = ent->d_name;
         size_t nl = strlen(name);
-        if (nl < 5) continue; /* skip short names */
-        if (strcmp(name + nl - 4, ".cfg") != 0) continue;
+        if (nl < 5) {
+            continue; /* skip short names */
+        }
+        if (strcmp(name + nl - 4, ".cfg") != 0) {
+            continue;
+        }
 
         snprintf(path, sizeof(path), "%s/%s", dir, name);
 
