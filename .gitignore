@@ -1,0 +1,60 @@
+# .gitignore for cfgscript (C project)
+
+# Compiled object files and libraries
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+
+# Shared libraries
+*.so
+*.dll
+*.dylib
+
+# Preprocessed / assembly / listings
+*.i
+*.ii
+*.s
+*.lst
+
+# Debug and temporary files
+*.pdb
+*.idb
+*.ilk
+*.exp
+*~
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Build directories
+build/
+bin/
+cmake-build-*/
+
+# Coverage and test artifacts
+coverage/
+*.gcda
+*.gcno
+
+# IDEs and editors
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Optional: keep config samples tracked (do not ignore configs/)
+# configs/

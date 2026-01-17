@@ -1,0 +1,26 @@
+# 继承LLVM
+BasedOnStyle: LLVM
+
+# 使用空格缩进
+UseTab: Never
+
+# 缩进宽度
+IndentWidth: 4
+
+# Tab键宽度
+TabWidth: 4
+
+# 一行的最大宽度
+ColumnLimit: 100
+
+# 简短if语句不并入上一行
+AllowShortIfStatementsOnASingleLine: false
+
+# 简短函数不并入上一行
+AllowShortFunctionsOnASingleLine: false
+
+# 连续定义宏对齐
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
+
+# Linux花括号换行风格，除函数、命名空间、类定义，其他左花括号位于上一行
+BreakBeforeBraces: Linux 
